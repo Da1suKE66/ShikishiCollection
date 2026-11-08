@@ -1,0 +1,4 @@
+import type {Library} from "../../lib/model";
+export function fixtureLibrary():Library {
+ return {schemaVersion:1,rawNotes:"Example notes",artists:[{id:"demo",name:"示例画师",aliases:["Demo"],circle:"",works:["示例作品"],category:"待整理",tags:[],notes:"",links:{x:"",fanbox:"",booth:"",website:""},verifiedSource:"",favorite:false,monitor:false,color:0}],collections:[{id:"example-collection",artistId:"demo",title:"示例色纸",type:"亲签色纸",status:"待确认",signature:"待确认",price:"",channel:"",date:"",notes:"",photo:"",source:""}],benefits:[{id:"example-benefit",artistId:"demo",title:"示例特典",window:"",plans:"",rules:"",state:"待核对",startDate:"",requiredMonths:0,source:""}],events:[{id:"example-event",name:"示例展会",date:"",endDate:"",dateNote:"年份待核实",location:"",artistIds:["demo"],booth:"",notes:"",source:"",confirmed:false}]};
+}
