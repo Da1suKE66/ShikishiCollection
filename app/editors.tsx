@@ -1,11 +1,20 @@
 "use client";
-import {useEffect,useRef,useState,useId,type FormEvent,type ReactNode} from "react";
+import {useEffect,useRef,useState,useId,type FormEvent,type ReactNode,type KeyboardEvent} from "react";
 import {X,Upload,LoaderCircle,Trash2,ExternalLink} from "lucide-react";
 import {type Artist,type Benefit,type Collection,type EventRecord,type Library,collectionTypes,collectionStates,targetDate} from "../lib/model";
 import {platformUrl} from "../lib/source-utils";
-export function Dialog({title,children,onClose,wide=false,drawer=false}:{title:string;children:ReactNode;onClose:()=>void;wide?:boolean;drawer?:boolean}){
- const ref=useRef<HTMLDialogElement>(null);const id=useId();useEffect(()=>{ref.current?.showModal();return()=>ref.current?.close();},[]);
- return <dialog ref={ref} className={`${wide?"wide":""} ${drawer?"drawer":""}`} aria-labelledby={id} onCancel={e=>{e.preventDefault();onClose();}} onClick={e=>{if(e.target===e.currentTarget)onClose();}}><div className="dialog-inner"><header className="dialog-heading"><div><span className="eyebrow">SHIKISHI TECHO</span><h2 id={id}>{title}</h2></div><button className="icon-button" onClick={onClose} aria-label="关闭窗口"><X size={20}/></button></header>{children}</div></dialog>;
+import {useModalScrollLock} from "./use-modal-scroll-lock";
+function containDialogFocus(event:KeyboardEvent<HTMLDialogElement>){
+ if(event.key!=="Tab"||event.altKey||event.ctrlKey||event.metaKey)return;
+ const controls=Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled),a[href],input:not(:disabled):not([type="hidden"]),select:not(:disabled),textarea:not(:disabled),[tabindex]:not([tabindex="-1"])')).filter(e=>e.getClientRects().length>0&&e.tabIndex>=0);
+ if(!controls.length)return;
+ event.preventDefault();const index=controls.indexOf(document.activeElement as HTMLElement);
+ const next=index<0?(event.shiftKey?controls.length-1:0):(index+(event.shiftKey?-1:1)+controls.length)%controls.length;controls[next].focus();
+}
+export function Dialog({title,children,onClose,wide=false,drawer=false,navigation=false}:{title:string;children:ReactNode;onClose:()=>void;wide?:boolean;drawer?:boolean;navigation?:boolean}){
+ const ref=useRef<HTMLDialogElement>(null);const id=useId();useModalScrollLock();
+ useEffect(()=>{const dialog=ref.current;const opener=document.activeElement;dialog?.showModal();return()=>{dialog?.close();if(opener instanceof HTMLElement&&opener.isConnected)opener.focus({preventScroll:true});};},[]);
+ return <dialog ref={ref} id={navigation?"mobile-navigation":undefined} className={`${wide?"wide":""} ${drawer?"drawer":""} ${navigation?"navigation-dialog":""}`} aria-labelledby={id} onKeyDown={containDialogFocus} onCancel={e=>{e.preventDefault();onClose();}} onClick={e=>{if(e.target===e.currentTarget)onClose();}}><div className="dialog-inner"><header className="dialog-heading"><div><span className="eyebrow">SHIKISHI TECHO</span><h2 id={id}>{title}</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label="关闭窗口"><X size={20}/></button></header><div className="dialog-content">{children}</div></div></dialog>;
 }
 export function Field({label,children,hint}:{label:string;children:ReactNode;hint?:string}){return <label className="field"><span>{label}</span>{children}{hint&&<small>{hint}</small>}</label>;}
 const split=(v:string)=>v.split(/[,，、\n]/);

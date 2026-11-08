@@ -18,3 +18,5 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run test:integration
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run test:responsive
