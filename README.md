@@ -70,7 +70,7 @@ docker compose run --rm --no-deps --user root --entrypoint tar shikishi -C /app/
 docker compose start
 ```
 
-JSON 导出不包含动态历史和照片原图；完整备份应使用数据目录或 Docker 卷。
+JSON 导入只恢复画师、收藏、特典、展会与原始笔记；动态历史不会随导入还原，照片原图也不在 JSON 中。完整备份应使用数据目录或 Docker 卷。
 
 ## 配置
 
