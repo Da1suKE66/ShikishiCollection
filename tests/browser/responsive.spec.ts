@@ -40,7 +40,7 @@ test("all seven populated pages fit the viewport", async ({page}) => {
     expect(dimensions.inner, id).toBe(page.viewportSize()!.width);
     await expect(page.locator("main")).toBeVisible();
     if (id === "overview") {
-      const text = (await page.locator(".hero p").boundingBox())!;
+      const text = (await page.locator(".hero h1").boundingBox())!;
       const art = (await page.locator(".paper-art").boundingBox())!;
       expect(text.x + text.width <= art.x || art.x + art.width <= text.x || text.y >= art.y + art.height + 4).toBeTruthy();
     }
